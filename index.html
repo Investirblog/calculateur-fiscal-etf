@@ -162,6 +162,9 @@ details .ans p{margin:0}
 .support .tools{font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
 footer{display:flex;flex-direction:column;gap:12px;font-size:13px;color:var(--muted);max-width:90ch}
 footer p{margin:0}
+.kofi-cta{margin:0;padding-top:12px;border-top:1px dashed var(--line);font-size:13.5px;color:var(--muted)}
+.kofi-cta[hidden]{display:none}
+.kofi-cta a{font-weight:500}
 .kofi-float{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:20;display:inline-flex;align-items:center;gap:8px;padding:9px 15px 9px 12px;border-radius:99px;background:var(--accent);color:var(--accent-ink);font-size:13.5px;font-weight:500;text-decoration:none;box-shadow:0 4px 14px rgba(0,0,0,.2);transition:opacity .2s,transform .2s}
 .kofi-float:hover{filter:brightness(1.08)}
 .kofi-float.is-hidden{opacity:0;transform:translateY(14px);pointer-events:none}
@@ -172,7 +175,7 @@ footer p{margin:0}
   .kofi-float{padding:11px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px))}
   .kofi-float span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 }
-@media print{.kofi-float,.livebar,.jump{display:none!important}}
+@media print{.kofi-cta,.kofi-float,.livebar,.jump{display:none!important}}
 @media (prefers-reduced-motion:reduce){.cmp .fill,.kofi-float{transition:none}html{scroll-behavior:auto}}
 </style>
 </head>
@@ -238,6 +241,7 @@ footer p{margin:0}
         <div class="scroll">
           <table><tbody id="rows"></tbody></table>
         </div>
+        <p class="kofi-cta" id="kofiCta" hidden>Ce calculateur t'a été utile ? <a href="https://ko-fi.com/nathanaeldumortier" target="_blank" rel="noopener">Offre-moi un café sur Ko-fi</a></p>
       </section>
 
       <section class="panel" aria-label="Évolution du capital">
@@ -326,7 +330,7 @@ footer p{margin:0}
       <p><b>Un site gratuit, sans publicité ni produit à vendre.</b> Il est tenu par <a href="https://x.com/TransactionB" rel="noopener">Nathanaël Dumortier</a>, auteur de la newsletter <a href="https://investir.blog">investir.blog</a>, indépendante et sans rémunération de courtier.</p>
       <div class="support-links">
         <a class="btn" href="https://investir.blog/subscribe">Recevoir la newsletter</a>
-        <a class="btn ghost" href="https://ko-fi.com/nathanaeldumortier" rel="noopener">Offrir un café sur Ko-fi</a>
+        <a class="btn ghost" href="https://ko-fi.com/nathanaeldumortier" target="_blank" rel="noopener">Offrir un café sur Ko-fi</a>
       </div>
       <p class="tools">Autres outils gratuits : <a href="https://laboetf.eu">Labo ETF</a> (stratégies d'ETF backtestées) · <a href="https://macroetf.com">MacroETF</a> (secteurs selon le régime économique) · <a href="https://rotationshield.be">RotationShield</a> (signal actions ou cash) · <a href="https://momentumstatic.netlify.app">MomentumStatic</a> (rotation momentum entre ETF) · <a href="https://hodlometre.com">HODLomètre</a> (cycle du Bitcoin)</p>
     </div>
@@ -336,7 +340,7 @@ footer p{margin:0}
   </footer>
 </div>
 
-<a class="kofi-float is-hidden" href="https://ko-fi.com/nathanaeldumortier" rel="noopener" aria-label="Soutenir le site : offrir un café sur Ko-fi" tabindex="-1">
+<a class="kofi-float is-hidden" href="https://ko-fi.com/nathanaeldumortier" target="_blank" rel="noopener" aria-label="Soutenir le site : offrir un café sur Ko-fi" tabindex="-1">
   <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 10h1.5a2.5 2.5 0 0 1 0 5H17" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10.5 11.2c-.9-.9-2.4-.2-2.1 1 .3 1.1 2.1 2.3 2.1 2.3s1.8-1.2 2.1-2.3c.3-1.2-1.2-1.9-2.1-1Z" fill="currentColor"/></svg>
   <span>Offrir un café</span>
 </a>
@@ -414,7 +418,7 @@ footer p{margin:0}
     return {
       country: country, dist: $('type').value === 'dist', venue: $('venue').value,
       initial: Math.max(0, num('initial', 0)), monthly: Math.max(0, num('monthly', 0)),
-      years: years, r: num('ret', 0) / 100, y: Math.max(0, num('yield', 0)) / 100,
+      years: years, r: Math.max(-5, Math.min(20, num('ret', 0))) / 100, y: Math.max(0, Math.min(10, num('yield', 0))) / 100,
       exemption: 10000 + 1000 * parseInt($('ex').value, 10),
       harvest: $('harvest').checked
     };
@@ -512,6 +516,7 @@ footer p{margin:0}
     var w = $('warn');
     w.textContent = warn.join(' '); w.className = 'note' + (warn.length ? ' on' : '');
 
+    $('kofiCta').hidden = !isFinite(s.net);
     drawChart();
 
     var list = p.country === 'BE'
